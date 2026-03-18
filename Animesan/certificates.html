@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificates Section</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .certificates-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .certificates-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            transform: translateY(-30px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .certificates-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInUp 1s ease 0.2s forwards;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease 0.3s forwards;
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #4ecdc4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* Auto-adjusting image containers */
+        .certificate-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            animation: cardFadeIn 0.8s ease forwards;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            min-height: 400px;
+        }
+
+        .certificate-card:nth-child(1) { animation-delay: 0.4s; }
+        .certificate-card:nth-child(2) { animation-delay: 0.5s; }
+        .certificate-card:nth-child(3) { animation-delay: 0.6s; }
+        .certificate-card:nth-child(4) { animation-delay: 0.7s; }
+        .certificate-card:nth-child(5) { animation-delay: 0.8s; }
+        .certificate-card:nth-child(6) { animation-delay: 0.9s; }
+
+        .certificate-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .certificate-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .certificate-card:hover::before {
+            left: 100%;
+        }
+
+        .certificate-image {
+            width: 100%;
+            height: auto;
+            min-height: 180px;
+            max-height: 250px;
+            object-fit: contain;
+            object-position: center;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            aspect-ratio: 4/3;
+        }
+
+        .certificate-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .certificate-card:hover .certificate-image {
+            transform: scale(1.05);
+        }
+
+        .certificate-content {
+            position: relative;
+            z-index: 2;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .certificate-info {
+            flex-grow: 1;
+        }
+
+        .certificate-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .certificate-issuer {
+            color: #4ecdc4;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .certificate-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .certificate-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .skill-badge {
+            background: rgba(78, 205, 196, 0.3);
+            color: #4ecdc4;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(78, 205, 196, 0.4);
+        }
+
+        .view-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 5% auto;
+            max-width: 90%;
+            max-height: 90%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            width: auto;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .placeholder-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            min-height: 300px;
+            max-height: 70vh;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            color: white;
+            font-size: 4rem;
+            margin: 0 auto 20px;
+            aspect-ratio: 4/3;
+            object-fit: contain;
+        }
+
+        .modal-info {
+            margin-top: 20px;
+            text-align: left;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .certificates-container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .certificates-title {
+                font-size: 2.2rem;
+            }
+
+            .certificates-subtitle {
+                font-size: 1rem;
+            }
+
+            .certificates-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .filter-buttons {
+                gap: 10px;
+            }
+
+            .filter-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+
+            .modal-content {
+                margin: 2% auto;
+                max-width: 95%;
+                max-height: 95%;
+            }
+
+            .modal-header {
+                padding: 15px;
+            }
+
+            .modal-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .certificates-container {
+                padding: 20px;
+            }
+
+            .certificates-title {
+                font-size: 1.8rem;
+            }
+
+            .certificate-image {
+                min-height: 140px;
+                max-height: 180px;
+                font-size: 2.5rem;
+            }
+
+            .certificate-title {
+                font-size: 1.1rem;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .filter-btn {
+                width: 200px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="certificates-container">
+        <h2 class="certificates-title">My Certificates</h2>
+        <p class="certificates-subtitle">Professional certifications and achievements</p>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All Certificates</button>
+            <button class="filter-btn" data-filter="web">Web Development</button>
+            <button class="filter-btn" data-filter="cloud">Cloud Computing</button>
+            <button class="filter-btn" data-filter="design">Design</button>
+            <button class="filter-btn" data-filter="data">Data Science</button>
+        </div>
+        
+        <div class="certificates-grid" id="certificatesGrid">
+            <div class="certificate-card" data-category="web">
+                <div class="certificate-image">
+                    <img src="./cert/a1.png" alt="">
+                </div>
+                <div class="certificate-content">
+                    <div class="certificate-info">
+                        <h3 class="certificate-title">Full Stack Web Development</h3>
+                        <p class="certificate-issuer">Tech Academy Pro</p>
+                        <p class="certificate-date">December 2023</p>
+                        <div class="certificate-skills">
+                            <span class="skill-badge">React</span>
+                            <span class="skill-badge">Node.js</span>
+                            <span class="skill-badge">MongoDB</span>
+                        </div>
+                    </div>
+                    <button class="view-btn" onclick="openModal('Full Stack Web Development', 'Tech Academy Pro', 'December 2023', '🏆')">View Certificate</button>
+                </div>
+            </div>
+
+            <div class="certificate-card" data-category="cloud">
+                <div class="certificate-image">
+                    <img src="./cert/a2.png" alt="">
+                </div>
+                <div class="certificate-content">
+                    <div class="certificate-info">
+                        <h3 class="certificate-title">AWS Solutions Architect</h3>
+                        <p class="certificate-issuer">Amazon Web Services</p>
+                        <p class="certificate-date">November 2023</p>
+                        <div class="certificate-skills">
+                            <span class="skill-badge">AWS</span>
+                            <span class="skill-badge">Cloud</span>
+                            <span class="skill-badge">Architecture</span>
+                        </div>
+                    </div>
+                    <button class="view-btn" onclick="openModal('AWS Solutions Architect', 'Amazon Web Services', 'November 2023', '☁️')">View Certificate</button>
+                </div>
+            </div>
+
+            <div class="certificate-card" data-category="design">
+                <div class="certificate-image">
+                    <img src="./cert/a3.png" alt="">
+                </div>
+                <div class="certificate-content">
+                    <div class="certificate-info">
+                        <h3 class="certificate-title">UI/UX Design Professional</h3>
+                        <p class="certificate-issuer">Design Institute</p>
+                        <p class="certificate-date">October 2023</p>
+                        <div class="certificate-skills">
+                            <span class="skill-badge">Figma</span>
+                            <span class="skill-badge">UI/UX</span>
+                            <span class="skill-badge">Prototyping</span>
+                        </div>
+                    </div>
+                    <button class="view-btn" onclick="openModal('UI/UX Design Professional', 'Design Institute', 'October 2023', '🎨')">View Certificate</button>
+                </div>
+            </div>
+
+            <div class="certificate-card" data-category="data">
+                <div class="certificate-image">
+                    <img src="./cert/a4.png" alt="">
+                </div>
+                <div class="certificate-content">
+                    <div class="certificate-info">
+                        <h3 class="certificate-title">Data Science Certification</h3>
+                        <p class="certificate-issuer">Data Science Academy</p>
+                        <p class="certificate-date">September 2023</p>
+                        <div class="certificate-skills">
+                            <span class="skill-badge">Python</span>
+                            <span class="skill-badge">Machine Learning</span>
+                            <span class="skill-badge">Analytics</span>
+                        </div>
+                    </div>
+                    <button class="view-btn" onclick="openModal('Data Science Certification', 'Data Science Academy', 'September 2023', '📊')">View Certificate</button>
+                </div>
+            </div>
+
+            <div class="certificate-card" data-category="web">
+                <div class="certificate-image">⚛️</div>
+                <div class="certificate-content">
+                    <div class="certificate-info">
+                        <h3 class="certificate-title">React Developer Certification</h3>
+                        <p class="certificate-issuer">React Training Institute</p>
+                        <p class="certificate-date">August 2023</p>
+                        <div class="certificate-skills">
+                            <span class="skill-badge">React</span>
+                            <span class="skill-badge">Redux</span>
+                            <span class="skill-badge">JavaScript</span>
+                        </div>
+                    </div>
+                    <button class="view-btn" onclick="openModal('React Developer Certification', 'React Training Institute', 'August 2023', '⚛️')">View Certificate</button>
+                </div>
+            </div>
+
+            <div class="certificate-card" data-category="cloud">
+                <div class="certificate-image">🔧</div>
+                <div class="certificate-content">
+                    <div class="certificate-info">
+                        <h3 class="certificate-title">DevOps Engineer Professional</h3>
+                        <p class="certificate-issuer">DevOps Academy</p>
+                        <p class="certificate-date">July 2023</p>
+                        <div class="certificate-skills">
+                            <span class="skill-badge">Docker</span>
+                            <span class="skill-badge">Kubernetes</span>
+                            <span class="skill-badge">CI/CD</span>
+                        </div>
+                    </div>
+                    <button class="view-btn" onclick="openModal('DevOps Engineer Professional', 'DevOps Academy', 'July 2023', '🔧')">View Certificate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="certificateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Certificate Title</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="placeholder-image" id="modalImage">🏆</div>
+                <div class="modal-info">
+                    <p><strong>Issuer:</strong> <span id="modalIssuer">Tech Academy Pro</span></p>
+                    <p><strong>Date:</strong> <span id="modalDate">December 2023</span></p>
+                    <p><strong>Description:</strong> This certificate validates the completion of comprehensive training and assessment in the specified technology domain.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const certificateCards = document.querySelectorAll('.certificate-card');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+
+                const filterValue = button.getAttribute('data-filter');
+
+                certificateCards.forEach(card => {
+                    if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                        card.style.display = 'block';
+                        card.style.animation = 'cardFadeIn 0.5s ease forwards';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Modal functionality
+        function openModal(title, issuer, date, icon) {
+            const modal = document.getElementById('certificateModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalIssuer = document.getElementById('modalIssuer');
+            const modalDate = document.getElementById('modalDate');
+            const modalImage = document.getElementById('modalImage');
+
+            modalTitle.textContent = title;
+            modalIssuer.textContent = issuer;
+            modalDate.textContent = date;
+            modalImage.textContent = icon;
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('certificateModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('certificateModal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Observe certificate cards for scroll animations
+        certificateCards.forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add ripple effect to cards
+        certificateCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 50%;
+                    left: ${x}px;
+                    top: ${y}px;
+                    transform: scale(0);
+                    animation: ripple 0.6s ease-out;
+                    pointer-events: none;
+                `;
+
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add CSS for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
